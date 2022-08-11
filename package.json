@@ -1,0 +1,13 @@
+{
+  "name": "nes_emulator",
+  "version": "1.0.0",
+  "main": "main.js",
+  "author": "Truong Khoi Nguyen <khoinguyen31052002@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "20.0.2"
+  },
+  "scripts": {
+    "start": "electron ."
+  }
+}
