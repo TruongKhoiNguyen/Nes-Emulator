@@ -1,3 +1,4 @@
+// resizeCanvas :: canvas -> IO ()
 const resizeCanvas = (canvas) => {
   const width = 256;
   const height = 240;
@@ -14,6 +15,7 @@ const resizeCanvas = (canvas) => {
   canvas.height = height * scale;
 };
 
+// resizeText :: canvas -> IO ()
 const resizeText = (canvas) => {
   const ctx = canvas.getContext("2d");
   ctx.font = "bold 5vmin Arial";

@@ -1,12 +1,13 @@
 import { resizeCanvas, resizeText } from "./canvas-manager.js";
 
+// bootupState :: canvas -> GameState
 const bootupState = (canvas) => {
   const resizeHandler = (e) => {
     setTimeout(() => {
       resizeCanvas(canvas);
       resizeText(canvas);
     }, 100);
-  }
+  };
 
   return {
     canvas: canvas,
@@ -18,12 +19,14 @@ const bootupState = (canvas) => {
 
       document.body.appendChild(canvas);
     },
+
     run: () => {},
+
     clean: () => {
       window.removeEventListener("resize", resizeHandler, false);
-
       canvas.remove();
     },
+
     updateConfig: () => {},
   };
 };

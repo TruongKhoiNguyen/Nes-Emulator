@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain } = require("electron");
+const { app, BrowserWindow, Menu, dialog } = require("electron");
 const fs = require("fs");
 const path = require("path");
 
@@ -7,34 +7,60 @@ const createWindow = () => {
     width: 256 * 2,
     height: 240 * 2,
     useContentSize: true,
-    minWidth: 256,
-    minHeight: 240,
+    minWidth: 256 + 100,
+    minHeight: 240 + 100,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
 
+  const isMacOs = process.platform === "darwin";
+
   const template = [
+    ...(isMacOs
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              { role: "about" },
+              { type: "separator" },
+              { role: "services" },
+              { type: "separator" },
+              { role: "hide" },
+              { role: "hideOthers" },
+              { role: "unhide" },
+              { type: "separator" },
+              { role: "quit" },
+            ],
+          },
+        ]
+      : []),
     {
       label: "File",
       submenu: [
         {
-          label: "Open files",
-          click: () => loadFile(win),
+          label: "Open",
+          click: () => loadRom(win),
+          accelerator: isMacOs ? "Cmd+O" : "Ctrl+O",
         },
         {
           label: "Close",
           click: () => closeGame(win),
+          accelerator: isMacOs ? "Cmd+W" : "Ctrl+W",
+        },
+        {
+          label: "Quit",
+          role: isMacOs ? "close" : "quit",
         },
       ],
     },
-    { label: "Config", submenu: [{ label: "Keymap" }] },
     {
       label: "Help",
       submenu: [
         {
-          label: "Developer tool",
+          label: "Toggle Developer Tools",
           click: () => win.webContents.openDevTools(),
+          accelerator: isMacOs ? "Shift+Cmd+I" : "Ctrl+Shift+I",
         },
       ],
     },
@@ -54,8 +80,6 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
-
-  ipcMain.on("set-keymap", handleKeymap);
 });
 
 app.on("window-all-closed", () => {
@@ -64,8 +88,11 @@ app.on("window-all-closed", () => {
   }
 });
 
-const loadFile = (mainWindow) => {
-  const files = dialog.showOpenDialogSync();
+const loadRom = (mainWindow) => {
+  const files = dialog.showOpenDialogSync({
+    filters: [{ name: "NES ROM files", extensions: ["nes"] }],
+  });
+
   if (files) {
     const file = files[0];
 
@@ -79,51 +106,8 @@ const closeGame = (mainWindow) => {
   mainWindow.webContents.send("close-rom");
 };
 
-const buttonNumberMap = new Map([
-  [0, "a"],
-  [1, "b"],
-  [2, "select"],
-  [3, "start"],
-  [4, "up"],
-  [5, "down"],
-  [6, "left"],
-  [7, "right"],
-]);
-
-const specialCharacter = new Map([
-  ["13", "Enter"],
-  ["32", "Space"],
-  ["37", "Left"],
-  ["38", "Up"],
-  ["39", "Right"],
-  ["40", "Down"],
-  ["16", "Shift"],
-  ["18", "Alt"],
-  ["91", "OS"],
-  ["17", "Control"],
-  ["27", "Escape"],
-  ["9", "Tab"],
-]);
-
-const handleKeymap = (event, keymap) => {
-  console.log(parseKeymap(keymap));
-};
-
-const parseKeymap = (keymap) =>
-  new Map(
-    Array.from(new Map(Object.entries(keymap)))
-      .map(([key, button]) => [key, buttonNumberMap.get(button)])
-      .map(([key, button]) => [
-        key,
-        { button: button, keyname: String.fromCharCode(key) },
-      ])
-      .map(([key, { button, keyname }]) => [
-        key,
-        {
-          button: button,
-          keyname: specialCharacter.get(key)
-            ? specialCharacter.get(key)
-            : keyname,
-        },
-      ])
-  );
+// TODO: Remapable buttons
+// TODO: Swappable emulator engine
+// TODO: Preferences for sound and video
+// TODO: Fullscreen enable
+// TODO: Catch error using Either Functor

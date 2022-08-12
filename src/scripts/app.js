@@ -4,44 +4,57 @@ import gameplayState from "./gameplay-state.js";
 
 const NesJs = window.NesJs;
 
-const appCore = (config, state) => ({
-  config: config,
-  state: state,
-  eventHandlers: [],
-  loadRom: (rom) => {
+// appCore :: Object -> GameState -> Game
+const appCore = (config, state) => {
+  const changeState = (newState) => {
     state?.clean();
-    const newCanvas = document.createElement("canvas");
-    state = gameplayState(
-      newCanvas,
-      emulator(rom, new NesJs.Nes(), newCanvas),
-      config
-    );
+    state = newState;
     state?.setup();
     state?.run();
-  },
-  close: () => {
-    state?.clean();
-    state = bootupState(document.createElement("canvas"));
-    state?.setup();
-    state?.run();
-  },
-  getConfig: (key) => config.get(key),
-  setConfig: (key, value) => {
-    config.set(key, value);
-    state.updateConfig();
-  },
-  run: () => {
-    state?.setup();
-    state?.run();
-  },
-});
+  };
 
+  return {
+    config: config,
+    state: state,
+    eventHandlers: [],
+
+    loadRom: (rom) => {
+      const newCanvas = document.createElement("canvas");
+      changeState(
+        gameplayState(
+          newCanvas,
+          emulator(rom, new NesJs.Nes(), newCanvas),
+          config
+        )
+      );
+    },
+
+    close: () => {
+      changeState(bootupState(document.createElement("canvas")));
+    },
+
+    getConfig: (key) => config.get(key),
+
+    setConfig: (key, value) => {
+      config.set(key, value);
+      state.updateConfig();
+    },
+
+    run: () => {
+      state?.setup();
+      state?.run();
+    },
+  };
+};
+
+// addEventHandler :: Game -> [EventHandler] -> Game
 const addEventHandler = (app, eventHandlers) =>
   addSetup({
     ...app,
     eventHandlers: [...app.eventHandlers, ...eventHandlers],
   });
 
+// addSetup :: Game -> Game
 const addSetup = (app) => ({
   ...app,
   setup: () => {
@@ -49,6 +62,7 @@ const addSetup = (app) => ({
   },
 });
 
+// app :: Object -> GameState -> [EventHandler] -> Game
 const app = (config, state, eventHandlers) =>
   addSetup(addEventHandler(appCore(config, state), eventHandlers));
 

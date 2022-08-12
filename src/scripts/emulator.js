@@ -2,6 +2,7 @@ import display from "./display.js";
 
 const NesJs = window.NesJs;
 
+// emulator :: ROM -> EmulatorEngine -> canvas -> Emulator
 const emulator = (rom, nes, canvas) => {
   const handleKeyUp = (e) => nes.handleKeyUp(e);
   const handleKeyDown = (e) => nes.handleKeyDown(e);

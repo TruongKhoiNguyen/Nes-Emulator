@@ -29,7 +29,5 @@ window.electronAPI.onCloseRom((_event, value) => {
   runningApp.close();
 });
 
-window.electronAPI.sendKeymapConfig(customKeymap);
-
 runningApp.setup();
 runningApp.run();
