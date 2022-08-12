@@ -1,40 +1,36 @@
-import CanvasManager from "./canvas-manager.js";
-import Emulator from "./emulator.js";
-import FileDropHandler from "./file-drop-handler.js";
-import KeyMapperBuilder from "./key-mapper-builder.js";
+import { resizeCanvas } from "./canvas-manager.js";
 
-class GameplayState {
-  constructor(context, file) {
-    this.context = context;
-    this.rom = file.target.result;
-    this.canvasManager = new CanvasManager();
-    this.fileDropHandler = new FileDropHandler();
-    this.emulator = new Emulator(this.rom, this.canvasManager.canvas);
-  }
+// gameplayState :: canvas -> Emulator -> Object -> GameState
+const gameplayState = (canvas, emulator, config) => {
+  const resizeCanvasHandler = (e) => {
+    setTimeout(() => resizeCanvas(canvas), 100);
+  };
 
-  setup() {
-    this.fileDropHandler.setCallback((file) => {
-      this.emulator.stop();
-      const gameplayState = new GameplayState(this.context, file);
-      this.context.changeState(gameplayState);
-      this.context.setup();
-      this.context.run();
-    });
-  }
+  return {
+    canvas: canvas,
 
-  run() {
-    const keymapConfig = new KeyMapperBuilder().setA(83).setB(65).build();
-    this.emulator.customKeymap(keymapConfig);
-    this.emulator.bindKey(window);
-    this.emulator.run();
-  }
+    setup: () => {
+      resizeCanvas(canvas);
+      window.addEventListener("resize", resizeCanvasHandler, false);
+      document.body.appendChild(canvas);
+      emulator.setup();
+      emulator.customKeymap(config.get("keymap"));
+    },
 
-  clean() {
-    this.fileDropHandler.clean();
-    this.emulator = null;
-    this.canvasManager.clean();
-    this.rom = null;
-  }
-}
+    run: () => {
+      emulator.run();
+    },
 
-export default GameplayState;
+    clean: () => {
+      window.removeEventListener("resize", resizeCanvasHandler, false);
+      canvas.remove();
+      emulator.clean();
+    },
+
+    updateConfig: () => {
+      emulator.customKeymap(config.get("keymap"));
+    },
+  };
+};
+
+export default gameplayState;

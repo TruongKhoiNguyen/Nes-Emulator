@@ -1,64 +1,46 @@
-class FileDropHandler {
-  constructor() {
-    this.callback = () => {};
-
-    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) =>
-      document.body.addEventListener(
-        eventName,
-        (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        },
-        false
-      )
-    );
-
-    document.body.addEventListener(
-      "drop",
-      (e) => this.handleFileDrop(e),
-      false
-    );
-  }
-
-  handleFileDrop(e) {
+// fileDropHandler :: fn -> EventHandler
+const fileDropHandler = (callback) => {
+  const handleFileDrop = (e) => {
     const dt = e.dataTransfer;
     const files = dt.files;
 
-    this.loadFile(files[0]);
-  }
+    loadFile(files[0], callback);
+  };
 
-  loadFile(file) {
-    const reader = new FileReader();
+  return {
+    callback: callback,
 
-    reader.onload = this.callback;
+    setup: () => {
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) =>
+        document.body.addEventListener(eventName, preventDefault, false)
+      );
 
-    reader.readAsArrayBuffer(file);
-  }
+      document.body.addEventListener("drop", handleFileDrop, false);
+    },
 
-  setCallback(callback) {
-    this.callback = callback;
-  }
+    clean: () => {
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) =>
+        document.body.removeEventListener(eventName, preventDefault, false)
+      );
 
-  clean() {
-    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) =>
-      document.body.removeEventListener(
-        eventName,
-        (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        },
-        false
-      )
-    );
+      document.body.removeEventListener("drop", handleFileDrop, false);
+    },
+  };
+};
 
-    document.body.removeEventListener(
-      "drop",
-      (e) => this.handleFileDrop(e),
-      false
-    );
+// preventDefault :: Event -> IO ()
+const preventDefault = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
 
-    this.callback = null;
-  }
-}
+// loadFile :: File -> Fn -> IO ()
+const loadFile = (file, callback) => {
+  const reader = new FileReader();
 
-export default FileDropHandler;
+  reader.onload = callback;
+
+  reader.readAsArrayBuffer(file);
+};
+
+export default fileDropHandler;
