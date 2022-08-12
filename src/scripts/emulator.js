@@ -1,32 +1,38 @@
-import Display from "./display.js";
+import display from "./display.js";
 
-class Emulator {
-  constructor(romFile, canvas) {
-    this.nes = new NesJs.Nes();
+const NesJs = window.NesJs;
 
-    this.nes.setRom(new NesJs.Rom(romFile));
-    this.nes.setDisplay(new Display(canvas));
-    this.nes.setAudio(new NesJs.Audio());
+const emulator = (rom, nes, canvas) => {
+  const handleKeyUp = (e) => nes.handleKeyUp(e);
+  const handleKeyDown = (e) => nes.handleKeyDown(e);
 
-    this.nes.bootup();
-  }
+  return {
+    setup: () => {
+      nes.setRom(new NesJs.Rom(rom));
+      nes.setDisplay(display(canvas));
+      nes.setAudio(new NesJs.Audio());
+      nes.bootup();
 
-  run() {
-    this.nes.run();
-  }
+      window.onkeydown = handleKeyDown;
+      window.onkeyup = handleKeyUp;
+    },
 
-  bindKey(window) {
-    window.onkeydown = (e) => this.nes.handleKeyDown(e);
-    window.onkeyup = (e) => this.nes.handleKeyUp(e);
-  }
+    run: () => {
+      nes.run();
+    },
 
-  customKeymap(config) {
-    this.nes.KEY_TO_PAD_BUTTONS = config;
-  }
+    customKeymap: (config) => {
+      if (config) {
+        nes.KEY_TO_PAD_BUTTONS = config;
+      }
+    },
 
-  stop() {
-    this.nes.stop();
-  }
-}
+    clean: () => {
+      nes.stop();
+      window.onkeydown = null;
+      window.onkeyup = null;
+    },
+  };
+};
 
-export default Emulator;
+export default emulator;

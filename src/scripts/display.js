@@ -17,4 +17,6 @@ class Display extends NesJs.Display {
   }
 }
 
-export default Display;
+const display = (canvas) => new Display(canvas);
+
+export default display;

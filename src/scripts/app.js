@@ -1,20 +1,57 @@
-class App {
-  constructor() {
-    this.state = null;
-  }
+import bootupState from "./bootup-state.js";
+import emulator from "./emulator.js";
+import gameplayState from "./gameplay-state.js";
 
-  setup() {
-    this.state.setup();
-  }
+const NesJs = window.NesJs;
 
-  run() {
-    this.state.run();
-  }
+const appCore = (config, state) => ({
+  config: config,
+  state: state,
+  eventHandlers: [],
+  loadRom: (rom) => {
+    state?.clean();
+    const newCanvas = document.createElement("canvas");
+    state = gameplayState(
+      newCanvas,
+      emulator(rom, new NesJs.Nes(), newCanvas),
+      config
+    );
+    state?.setup();
+    state?.run();
+  },
+  close: () => {
+    state?.clean();
+    state = bootupState(document.createElement("canvas"));
+    state?.setup();
+    state?.run();
+  },
+  getConfig: (key) => config.get(key),
+  setConfig: (key, value) => {
+    config.set(key, value);
+    state.updateConfig();
+  },
+  run: () => {
+    state?.setup();
+    state?.run();
+  },
+});
 
-  changeState(state) {
-    this.state?.clean();
-    this.state = state;
-  }
-}
+const addEventHandler = (app, eventHandlers) =>
+  addSetup({
+    ...app,
+    eventHandlers: [...app.eventHandlers, ...eventHandlers],
+  });
 
-export default App;
+const addSetup = (app) => ({
+  ...app,
+  setup: () => {
+    app.eventHandlers.forEach((eventHandler) => eventHandler.setup());
+  },
+});
+
+const app = (config, state, eventHandlers) =>
+  addSetup(addEventHandler(appCore(config, state), eventHandlers));
+
+export default app;
+
+export { addEventHandler, addSetup };
