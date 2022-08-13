@@ -3,6 +3,9 @@ const resizeCanvas = (canvas) => {
   const width = 256;
   const height = 240;
 
+  // I use whole number instead of fractional scaling because I'm not
+  // entirely sure fractional scaling can be handled reliably, especially
+  // when the code draw out each pixel instead of whole shape.
   let scale = 1;
 
   if (window.innerWidth <= window.innerHeight) {
