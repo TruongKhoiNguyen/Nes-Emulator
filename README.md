@@ -2,7 +2,7 @@
 
 This is a desktop application written in standard web technology and electron framework used to play games for Nintendo Entertainment System.
 
-I started writing this program from 8th of August 2022.
+I started writing this program from the 8th of August 2022.
 
 # Features
 
@@ -139,7 +139,7 @@ I also used this project as an opportunities to learn more about functional prog
 
 ## How I started
 
-At first, I intended to write my own emulator without relying on any third-party codebases. However, after 2 days of intense coding, I realise this idea maybe a bit too ambitious. I have written emulator for chip-8 before. But honestly, I could not predict that the NES 6502 CPU (actually it is RP2A03) is actually much more complex than I have thought, and I may not finished the project on time. Therefore, I abadoned all the NES code and opt for a third party solution instead. So after wandering the internet for a while, I found the nes-js by takahirox to be quite simple to use. So I chose this as a base for my project.
+At first, I intended to write my own emulator without relying on any third-party codebases. However, after 2 days of intense coding, I realised this idea maybe a bit too ambitious. I have written emulator for chip-8 before. But honestly, I could not predict that the NES 6502 CPU (actually it is RP2A03) is actually much more complex than I have thought, and I may not finished the project on time. Therefore, I abadoned all the NES code and opt for a third party solution instead. So after wandering the internet for a while, I found the nes-js by takahirox to be quite simple to use. So I chose this as a base for my project.
 
 I started writing by making a simple web-based version first. And from that, I iteratively adding more functionalities and complexities while researching new techniques to make my code more manageable.
 
@@ -155,4 +155,4 @@ Here are some gameplay I captured from my program
 
 ![screenshot 3](images/Screenshot%202022-08-13%20113709.png)
 
-This project is still quite primitive. There are stil bugs I need to fix, performance issues I have to solve, and a lot of "cool" features I want to implemented. But overall, I actually got a lot of satisfaction while working project. That is also the reason while I didn't commit like normal, by features added, and committed by each working session, in order to not disrupt my flow state.
+This project is still quite a bit primitive. There are stil bugs I need to fix, performance issues I have to solve, and a lot of "cool" features I want to implemented. But overall, I actually got a lot of satisfaction while working project. That is also the reason while I didn't commit like normal, by features added, and committed by each working session, in order to not disrupt my flow state.
