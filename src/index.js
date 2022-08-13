@@ -21,13 +21,15 @@ const runningFileDropHandler = fileDropHandler((file) => {
 
 const runningApp = addEventHandler(startApp, [runningFileDropHandler]);
 
-window.electronAPI.onLoadRom((_event, value) => {
-  runningApp.loadRom(value);
-});
+if (window.electronAPI) {
+  window.electronAPI.onLoadRom((_event, value) => {
+    runningApp.loadRom(value);
+  });
 
-window.electronAPI.onCloseRom((_event, value) => {
-  runningApp.close();
-});
+  window.electronAPI.onCloseRom((_event, value) => {
+    runningApp.close();
+  });
+}
 
 runningApp.setup();
 runningApp.run();
