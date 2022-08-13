@@ -32,7 +32,7 @@ I also intended to add these features when I have the time.
 
 3. Run the project
 
-   ```
+   ```console
    yarn start
    ```
 
@@ -155,4 +155,4 @@ Here are some gameplay I captured from my program
 
 ![screenshot 3](images/Screenshot%202022-08-13%20113709.png)
 
-This project is still quite a bit primitive. There are stil bugs I need to fix, performance issues I have to solve, and a lot of "cool" features I want to implemented. But overall, I actually got a lot of satisfaction while working project. That is also the reason while I didn't commit like normal, by features added, and committed by each working session, in order to not disrupt my flow state.
+This project is still quite a bit in primitive state. There are stil bugs I need to fix, performance issues I have to solve, and a lot of "cool" features I want to implemented. But overall, I actually got a lot of satisfaction while working project. That is also the reason while I didn't commit like normal, by features added, and committed by each working session, in order to not disrupt my flow state.
